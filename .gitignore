@@ -1,0 +1,17 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+.DS_Store
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# CocoaPods / SPM (not used here, but harmless to ignore)
+.build/
+Packages/
+.swiftpm/
+
+# CI artifacts pulled down locally
+ci-artifacts/

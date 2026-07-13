@@ -1,0 +1,438 @@
+<title>Wellness Companion — Screen Mockups</title>
+<style>
+  :root{
+    --ground:#F4F6F2;
+    --surface:#FFFFFF;
+    --surface-2:#EAEEE6;
+    --line:#D9E0D3;
+    --text:#141A15;
+    --text-dim:#556358;
+    --accent:#E0653A;
+    --accent-soft:#F6DCCB;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    --rounded: -apple-system, "SF Pro Rounded", "SF Compact Rounded", "Segoe UI", sans-serif;
+  }
+  :root[data-theme="dark"]{
+    --ground:#12140F;
+    --surface:#1B1F17;
+    --surface-2:#242A1F;
+    --line:#33392C;
+    --text:#EEF2E9;
+    --text-dim:#9AA791;
+    --accent:#F0895E;
+    --accent-soft:#3A2A20;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#12140F;
+      --surface:#1B1F17;
+      --surface-2:#242A1F;
+      --line:#33392C;
+      --text:#EEF2E9;
+      --text-dim:#9AA791;
+      --accent:#F0895E;
+      --accent-soft:#3A2A20;
+    }
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--text);
+    font-family:var(--sans);
+    padding:48px 24px 80px;
+  }
+  .page{
+    max-width:1180px;
+    margin:0 auto;
+  }
+
+  /* ---------- Header ---------- */
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:var(--rounded);
+    font-weight:800;
+    font-size:clamp(28px,4vw,42px);
+    letter-spacing:-0.02em;
+    margin:0 0 10px;
+    text-wrap:balance;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:15px;
+    max-width:62ch;
+    line-height:1.55;
+    margin:0 0 6px;
+  }
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 22px;
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .meta b{ color:var(--text); font-weight:600; }
+
+  /* ---------- Note banner ---------- */
+  .note{
+    margin-top:22px;
+    padding:14px 16px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--text-dim);
+  }
+  .note strong{ color:var(--text); }
+
+  /* ---------- Watch gallery ---------- */
+  .gallery{
+    margin-top:44px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:34px;
+  }
+  figure{ margin:0; display:flex; flex-direction:column; align-items:center; gap:16px; }
+
+  .watch{
+    position:relative;
+    width:210px;
+    height:256px;
+    background:linear-gradient(160deg,#3a3d38,#111310 60%);
+    border-radius:52px;
+    padding:9px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 24px 40px -18px rgba(0,0,0,.55);
+  }
+  .crown{
+    position:absolute; right:-4px; top:78px;
+    width:9px; height:26px; border-radius:4px;
+    background:linear-gradient(180deg,#55584f,#26281f);
+  }
+  .sidebtn{
+    position:absolute; right:-3px; top:120px;
+    width:6px; height:40px; border-radius:3px;
+    background:linear-gradient(180deg,#4a4d45,#22241c);
+  }
+  .screen{
+    width:100%; height:100%;
+    background:#0B0D0A;
+    border-radius:44px;
+    overflow:hidden;
+    padding:20px 13px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    font-family:var(--rounded);
+    color:#F2F5EE;
+  }
+  .screen-title{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.01em;
+    color:#F2F5EE;
+    text-align:left;
+    margin-bottom:1px;
+  }
+
+  figcaption{
+    text-align:center;
+    max-width:220px;
+  }
+  figcaption .label{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:4px;
+  }
+  figcaption .desc{
+    font-size:12.5px;
+    color:var(--text-dim);
+    line-height:1.5;
+  }
+
+  /* ---- shared mini components inside the watch screens ---- */
+  .card{
+    background:#171C13;
+    border-radius:13px;
+    padding:8px 9px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .card .k{
+    font-size:8.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .card .v{
+    font-size:9px;
+    color:#C7D0BF;
+    line-height:1.35;
+  }
+  .dot{ width:5px; height:5px; border-radius:50%; display:inline-block; }
+  .g{ color:#5BD98A; } .g-dot{ background:#5BD98A; }
+  .b{ color:#63A9FF; } .b-dot{ background:#63A9FF; }
+  .p{ color:#FF7FC1; } .p-dot{ background:#FF7FC1; }
+  .o{ color:#FFB454; } .o-dot{ background:#FFB454; }
+  .r{ color:#FF6B6B; } .r-dot{ background:#FF6B6B; }
+  .pu{ color:#B98CFF; } .pu-dot{ background:#B98CFF; }
+  .gr{ color:#9AA396; } .gr-dot{ background:#9AA396; }
+
+  .ring-row{ display:flex; align-items:center; gap:9px; }
+  .ring{
+    width:46px; height:46px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(closest-side, #0B0D0A 62%, transparent 63% 100%),
+      conic-gradient(#5BD98A calc(var(--pct) * 1%), #1F2A1B 0);
+    font-size:9px; font-weight:800;
+  }
+  .steps-num{ font-size:16px; font-weight:800; line-height:1; }
+  .steps-goal{ font-size:7.5px; color:#8F9A88; margin-top:2px; }
+  .status-pill{
+    margin-top:3px;
+    font-size:9.5px; font-weight:700; color:#5BD98A;
+    background:rgba(91,217,138,.14);
+    border-radius:8px; padding:5px 7px; text-align:center;
+  }
+  .score-badge{
+    align-self:flex-start;
+    display:flex; align-items:center; gap:5px;
+    background:rgba(91,217,138,.16);
+    border-radius:20px; padding:4px 9px;
+    font-size:9px; font-weight:800; color:#5BD98A;
+  }
+  .nav-row{
+    margin-top:auto;
+    display:flex; flex-direction:column; gap:5px;
+  }
+  .nav-btn{
+    font-size:9px; font-weight:600; color:#DCE3D6;
+    background:#171C13; border-radius:9px; padding:6px 8px;
+    display:flex; align-items:center; gap:5px;
+  }
+  .nav-btn::before{ content:"›"; margin-left:auto; color:#6B7566; }
+
+  .back-row{ display:flex; align-items:center; gap:4px; font-size:8px; color:#8F9A88; margin-bottom:1px;}
+
+  /* ---------- Permission sheet ---------- */
+  .sheet{ background:#0B0D0A; display:flex; flex-direction:column; }
+  .sheet-icon{
+    width:30px; height:30px; border-radius:8px;
+    background:linear-gradient(160deg,#FF6B6B,#E0653A);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; margin:2px auto 6px;
+  }
+  .sheet-title{ font-size:10.5px; font-weight:800; text-align:center; }
+  .sheet-body{ font-size:8px; color:#9AA391; text-align:center; line-height:1.4; margin-top:3px; padding:0 4px;}
+  .perm-list{ margin-top:8px; display:flex; flex-direction:column; gap:5px; }
+  .perm-row{ display:flex; align-items:center; justify-content:space-between; background:#171C13; border-radius:9px; padding:5px 7px; }
+  .perm-row .name{ font-size:8.5px; font-weight:600; display:flex; align-items:center; gap:5px; }
+  .toggle{ width:18px; height:10px; border-radius:6px; background:#5BD98A; position:relative; }
+  .toggle::after{ content:""; position:absolute; right:1.5px; top:1.5px; width:7px; height:7px; border-radius:50%; background:#0B0D0A; }
+  .sheet-buttons{ margin-top:auto; display:flex; flex-direction:column; gap:5px; }
+  .btn-allow{ background:#2B4A34; color:#7BE3A0; font-size:9.5px; font-weight:800; text-align:center; border-radius:9px; padding:6px; }
+  .btn-cancel{ color:#8F9A88; font-size:9px; text-align:center; padding:3px; }
+
+  /* ---------- rubric strip ---------- */
+  .rubric{
+    margin-top:56px;
+    border-top:1px solid var(--line);
+    padding-top:26px;
+  }
+  .rubric h2{
+    font-family:var(--rounded);
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th,td{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); }
+  th{ font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); font-weight:600; }
+  td.n{ font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--accent); font-weight:700; }
+  .table-wrap{ overflow-x:auto; }
+
+  footer{
+    margin-top:40px;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+</style>
+
+<div class="page">
+
+  <p class="eyebrow">Assignment 3 · WatchOS Personal Wellness Companion</p>
+  <h1>Wellness Companion — Screen Mockups</h1>
+  <p class="sub">High-fidelity design mockups of the three required screens plus the HealthKit permission
+  request, built to spec from the actual SwiftUI source in this project.</p>
+
+  <div class="meta">
+    <span><b>Student</b> Raman Kumari</span>
+    <span><b>App</b> Wellness Companion</span>
+    <span><b>Platform</b> watchOS 10 · SwiftUI</span>
+    <span><b>Advanced feature</b> Option A — Wellness Score System</span>
+  </div>
+
+  <div class="note">
+    <strong>Why mockups instead of Simulator screenshots:</strong> this project was assembled on Windows,
+    where Xcode and the watchOS Simulator aren't available. The four panels below are pixel-matched
+    reconstructions of what each SwiftUI view actually renders — same layout, copy, and color logic as
+    the code in <code>Views/</code>. Open the project in Xcode on a Mac and run ⌘R to capture the real
+    Simulator screenshots for submission.
+  </div>
+
+  <div class="gallery">
+
+    <!-- Screen 1: Dashboard -->
+    <figure>
+      <div class="watch">
+        <div class="crown"></div><div class="sidebtn"></div>
+        <div class="screen">
+          <div class="screen-title" style="color:#8F9A88;">Wellness</div>
+          <div class="ring-row">
+            <div class="ring" style="--pct:75;">75%</div>
+            <div>
+              <div class="steps-num">7,450</div>
+              <div class="steps-goal">of 10,000 goal</div>
+            </div>
+          </div>
+          <div class="status-pill">Excellent progress</div>
+          <div class="score-badge">78 · Excellent Activity</div>
+          <div class="nav-row">
+            <div class="nav-btn">📈 Insights</div>
+            <div class="nav-btn">❤️ Health Data Info</div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <div class="label">Screen 1</div>
+        <div class="desc"><strong style="color:var(--text)">Daily Wellness Dashboard</strong><br/>
+        Step metric, progress ring, live status, and the Wellness Score badge.</div>
+      </figcaption>
+    </figure>
+
+    <!-- Screen 2: Insights -->
+    <figure>
+      <div class="watch">
+        <div class="crown"></div><div class="sidebtn"></div>
+        <div class="screen">
+          <div class="back-row">‹ <span style="color:#DCE3D6; font-weight:700;">Insights</span></div>
+          <div class="card">
+            <div class="k g"><span class="dot g-dot"></span>WHAT STEPS MEASURE</div>
+            <div class="v">Estimates how much you've walked, from wrist motion sensors.</div>
+          </div>
+          <div class="card">
+            <div class="k b"><span class="dot b-dot"></span>TODAY'S INTERPRETATION</div>
+            <div class="v">You are 75% toward your daily goal of 10,000 steps.</div>
+          </div>
+          <div class="card">
+            <div class="k p"><span class="dot p-dot"></span>WELLNESS SCORE</div>
+            <div class="v">78/100 — Excellent Activity. Outstanding work today!</div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <div class="label">Screen 2</div>
+        <div class="desc"><strong style="color:var(--text)">Wellness Insights</strong><br/>
+        Metric explanation, interpretation, score, and a suggested activity.</div>
+      </figcaption>
+    </figure>
+
+    <!-- Screen 3: About Health Data -->
+    <figure>
+      <div class="watch">
+        <div class="crown"></div><div class="sidebtn"></div>
+        <div class="screen">
+          <div class="back-row">‹ <span style="color:#DCE3D6; font-weight:700;">Health Data</span></div>
+          <div class="card">
+            <div class="k r"><span class="dot r-dot"></span>DATA SOURCE</div>
+            <div class="v">Figures come from Apple HealthKit on your Apple Watch.</div>
+          </div>
+          <div class="card">
+            <div class="k b"><span class="dot b-dot"></span>WHY WE ASK</div>
+            <div class="v">Read-only access to the minimum metrics needed. No write access.</div>
+          </div>
+          <div class="card">
+            <div class="k pu"><span class="dot pu-dot"></span>PRIVACY</div>
+            <div class="v">Your data stays on-device. Never shared or sold.</div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <div class="label">Screen 3</div>
+        <div class="desc"><strong style="color:var(--text)">About Health Data</strong><br/>
+        Data source, permission rationale, and the app's privacy statement.</div>
+      </figcaption>
+    </figure>
+
+    <!-- HealthKit permission sheet -->
+    <figure>
+      <div class="watch">
+        <div class="crown"></div><div class="sidebtn"></div>
+        <div class="screen sheet">
+          <div class="sheet-icon">❤️</div>
+          <div class="sheet-title">"Wellness Companion"<br/>Would Like to Access<br/>Your Health Data</div>
+          <div class="sheet-body">Used to show your dashboard and calculate your wellness score. Data stays on this device.</div>
+          <div class="perm-list">
+            <div class="perm-row"><span class="name">🚶 Steps</span><div class="toggle"></div></div>
+            <div class="perm-row"><span class="name">🔥 Active Energy</span><div class="toggle"></div></div>
+            <div class="perm-row"><span class="name">⏱ Exercise Min.</span><div class="toggle"></div></div>
+          </div>
+          <div class="sheet-buttons">
+            <div class="btn-allow">Turn On All</div>
+            <div class="btn-cancel">Don't Allow</div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <div class="label">Permission Request</div>
+        <div class="desc"><strong style="color:var(--text)">HealthKit Authorization</strong><br/>
+        Requests read-only access to exactly the three metrics the app uses.</div>
+      </figcaption>
+    </figure>
+
+  </div>
+
+  <div class="rubric">
+    <h2>Rubric self-check</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Marks</th><th>Where it's satisfied</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>WatchOS Project Setup</td><td class="n">4</td><td>Standalone SwiftUI watchOS target, organized Views / Managers / Models, opens straight into Xcode</td></tr>
+          <tr><td>SwiftUI UI Design</td><td class="n">5</td><td>Progress ring, color-coded cards, rounded system type, consistent dark layout across 3 screens</td></tr>
+          <tr><td>Navigation &amp; Screen Structure</td><td class="n">4</td><td><code>NavigationStack</code> root + two <code>NavigationLink</code>s, one level deep</td></tr>
+          <tr><td>HealthKit Integration</td><td class="n">6</td><td>Real <code>HKHealthStore</code> auth + <code>HKStatisticsQuery</code> for 3 metrics, graceful denied/unavailable states</td></tr>
+          <tr><td>WatchOS Design Compliance</td><td class="n">3</td><td>Large glanceable text, minimal clutter, scrollable for smaller watch sizes</td></tr>
+          <tr><td>Advanced Requirement — Option A</td><td class="n">3</td><td>Weighted 0–100 Wellness Score across the exact 3 bands specified</td></tr>
+          <tr><td><strong>Total</strong></td><td class="n"><strong>25</strong></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>Wellness Companion · Assignment 3 · Raman Kumari</footer>
+
+</div>

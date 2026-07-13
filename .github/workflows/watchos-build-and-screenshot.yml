@@ -1,0 +1,69 @@
+name: watchOS Build & Screenshot
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-screenshot:
+    runs-on: macos-14
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Pick a watchOS simulator
+        run: |
+          SIM_JSON=$(xcrun simctl list devices available -j)
+          SIM_UDID=$(echo "$SIM_JSON" | jq -r '.devices | to_entries[] | .value[] | select(.name | test("Watch")) | .udid' | head -n1)
+          SIM_NAME=$(echo "$SIM_JSON" | jq -r --arg udid "$SIM_UDID" '.devices | to_entries[] | .value[] | select(.udid==$udid) | .name')
+          if [ -z "$SIM_UDID" ]; then
+            echo "No watchOS simulator found on this runner image." >&2
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "Using simulator: $SIM_NAME ($SIM_UDID)"
+          echo "SIM_UDID=$SIM_UDID" >> "$GITHUB_ENV"
+          echo "SIM_NAME=$SIM_NAME" >> "$GITHUB_ENV"
+
+      - name: Build for Simulator
+        run: |
+          xcodebuild build \
+            -project "WellnessCompanion Watch App.xcodeproj" \
+            -scheme "WellnessCompanion Watch App" \
+            -destination "platform=watchOS Simulator,id=$SIM_UDID" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Boot simulator, install & launch app
+        run: |
+          xcrun simctl boot "$SIM_UDID" || true
+          xcrun simctl bootstatus "$SIM_UDID" -b
+
+          APP_PATH="build/Build/Products/Debug-watchsimulator/WellnessCompanion Watch App.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "Built app not found at expected path:" >&2
+            find build/Build/Products -maxdepth 2 >&2
+            exit 1
+          fi
+
+          xcrun simctl install "$SIM_UDID" "$APP_PATH"
+          xcrun simctl launch "$SIM_UDID" com.ramankumari.wellnesscompanion.watchkitapp
+          sleep 6
+
+      - name: Capture screenshot
+        run: |
+          mkdir -p screenshots
+          xcrun simctl io "$SIM_UDID" screenshot "screenshots/dashboard-${SIM_NAME// /_}.png"
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: watchos-screenshots
+          path: screenshots/*.png
+          if-no-files-found: error
