@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-screenshot:
     runs-on: macos-14
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -56,14 +56,55 @@ jobs:
           xcrun simctl launch "$SIM_UDID" com.ramankumari.wellnesscompanion.watchkitapp
           sleep 6
 
-      - name: Capture screenshot
+      - name: Capture standalone screenshot
         run: |
           mkdir -p screenshots
-          xcrun simctl io "$SIM_UDID" screenshot "screenshots/dashboard-${SIM_NAME// /_}.png"
+          xcrun simctl io "$SIM_UDID" screenshot "screenshots/00-dashboard-standalone.png"
+
+      - name: Run UI test to capture all 3 screens
+        continue-on-error: true
+        run: |
+          xcodebuild test \
+            -project "WellnessCompanion Watch App.xcodeproj" \
+            -scheme "WellnessCompanion Watch App" \
+            -destination "platform=watchOS Simulator,id=$SIM_UDID" \
+            -derivedDataPath build \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Extract screenshots from test result bundle
+        if: always()
+        run: |
+          mkdir -p screenshots
+          if [ ! -d TestResults.xcresult ]; then
+            echo "No TestResults.xcresult produced; skipping extraction."
+            exit 0
+          fi
+          xcrun xcresulttool get --legacy --format json --path TestResults.xcresult > result.json
+
+          jq -r '.. | objects | select(has("payloadRef") and has("name")) | "\(.name._value // "unnamed")\t\(.payloadRef.id._value)"' result.json \
+            | sort -u \
+            | while IFS=$'\t' read -r name id; do
+                safe_name=$(echo "$name" | tr -c 'A-Za-z0-9._-' '_')
+                echo "Exporting $name ($id)"
+                xcrun xcresulttool export --legacy --type file --path TestResults.xcresult --id "$id" --output-path "screenshots/${safe_name}.png" || true
+              done
+
+          echo "Screenshots collected so far:"
+          ls -la screenshots
 
       - name: Upload screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: watchos-screenshots
-          path: screenshots/*.png
+          path: screenshots/*
           if-no-files-found: error
+
+      - name: Upload raw test result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcresult-bundle
+          path: TestResults.xcresult
+          if-no-files-found: ignore
