@@ -79,7 +79,7 @@ final class HealthKitManager: ObservableObject {
         metrics.exerciseMinutes = exerciseValue
     }
 
-    private func sumToday(for type: HKQuantityType, unit: HKUnit) -> Double {
+    private func sumToday(for type: HKQuantityType, unit: HKUnit) async -> Double {
         let calendar = Calendar.current
         let now = Date()
         let startOfDay = calendar.startOfDay(for: now)
