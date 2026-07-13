@@ -2,9 +2,11 @@
 //  WellnessCompanionUITests.swift
 //  WellnessCompanion Watch AppUITests
 //
-//  Launches the app and walks Dashboard -> Insights -> Dashboard ->
-//  About Health Data, attaching a real screenshot at each stop. Used by
-//  CI (.github/workflows/watchos-build-and-screenshot.yml) to produce
+//  Launches the app twice to capture Dashboard -> Insights and, fresh,
+//  Dashboard -> About Health Data, attaching a real screenshot at each
+//  stop. Relaunching between screens sidesteps watchOS's fiddly
+//  back-swipe gesture timing rather than relying on it. Used by CI
+//  (.github/workflows/watchos-build-and-screenshot.yml) to produce
 //  genuine watchOS Simulator captures of all three required screens.
 //  Author: Raman Kumari
 //
@@ -17,7 +19,7 @@ final class WellnessCompanionUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func testCaptureAllScreens() throws {
+    func testDashboardAndInsights() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -32,9 +34,12 @@ final class WellnessCompanionUITests: XCTestCase {
         insightsLink.tap()
         sleep(1)
         attachScreenshot(named: "02-Insights", of: app)
+    }
 
-        app.swipeRight()
-        sleep(1)
+    func testAboutHealthData() throws {
+        let app = XCUIApplication()
+        app.launch()
+        sleep(3)
 
         let healthLink = app.buttons["Health Data Info"]
         XCTAssertTrue(healthLink.waitForExistence(timeout: 5), "Health Data Info nav link not found on Dashboard")
