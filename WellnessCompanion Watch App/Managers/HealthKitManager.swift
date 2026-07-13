@@ -85,7 +85,7 @@ final class HealthKitManager: ObservableObject {
         let startOfDay = calendar.startOfDay(for: now)
         let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
 
-        return withCheckedContinuation { continuation in
+        return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
                 quantityType: type,
                 quantitySamplePredicate: predicate,
