@@ -80,14 +80,14 @@ jobs:
             echo "No TestResults.xcresult produced; skipping extraction."
             exit 0
           fi
-          xcrun xcresulttool get --legacy --format json --path TestResults.xcresult > result.json
+          xcrun xcresulttool get --format json --path TestResults.xcresult > result.json
 
           jq -r '.. | objects | select(has("payloadRef") and has("name")) | "\(.name._value // "unnamed")\t\(.payloadRef.id._value)"' result.json \
             | sort -u \
             | while IFS=$'\t' read -r name id; do
                 safe_name=$(echo "$name" | tr -c 'A-Za-z0-9._-' '_')
                 echo "Exporting $name ($id)"
-                xcrun xcresulttool export --legacy --type file --path TestResults.xcresult --id "$id" --output-path "screenshots/${safe_name}.png" || true
+                xcrun xcresulttool export --type file --path TestResults.xcresult --id "$id" --output-path "screenshots/${safe_name}.png" || true
               done
 
           echo "Screenshots collected so far:"
