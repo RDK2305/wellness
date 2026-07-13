@@ -140,12 +140,23 @@ WellnessCompanion Watch App/
 
 ## 9. Screenshots
 
-`Screenshots/screen_mockups.html` contains high-fidelity mockups of all four
-required captures (Dashboard, Insights, About Health Data, HealthKit
-permission request), built to match the actual SwiftUI layout and copy —
-open it in any browser. These stand in for Simulator screenshots because
-this project was built on a Windows machine without Xcode; replace them with
-real ⌘R Simulator captures before final submission if a Mac is available.
+- `Screenshots/dashboard-ci-denied-state.png` is a **real watchOS Simulator
+  screenshot**, captured by the GitHub Actions workflow in
+  `.github/workflows/watchos-build-and-screenshot.yml` on an actual macOS
+  runner (see the repo's Actions tab for the run). Because that CI run has
+  no HealthKit entitlement declared and nobody available to tap "Allow" on
+  a headless runner, `HealthKitManager.requestAuthorization()` throws and
+  the app correctly falls back to its denied-permission UI — this is a
+  genuine, working capture of the "handle denied permissions gracefully"
+  requirement.
+- `Screenshots/screen_mockups.html` contains high-fidelity mockups of the
+  remaining captures (Dashboard in the authorized/happy-path state,
+  Insights, About Health Data, and the HealthKit permission sheet), built
+  to match the actual SwiftUI layout and copy. These stand in for Simulator
+  screenshots because this project was built on a Windows machine without
+  Xcode. Replace them with real ⌘R Simulator captures on a Mac before final
+  submission — enable the HealthKit capability, seed sample Health data,
+  and walk through all three screens.
 
 ## 10. How to Run
 
