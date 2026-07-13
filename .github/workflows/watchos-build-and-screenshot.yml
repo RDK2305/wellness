@@ -58,8 +58,8 @@ jobs:
 
       - name: Capture standalone screenshot
         run: |
-          mkdir -p screenshots
-          xcrun simctl io "$SIM_UDID" screenshot "screenshots/00-dashboard-standalone.png"
+          mkdir -p ci-output
+          xcrun simctl io "$SIM_UDID" screenshot "ci-output/00-dashboard-standalone.png"
 
       - name: Run UI test to capture all 3 screens
         continue-on-error: true
@@ -69,42 +69,64 @@ jobs:
             -scheme "WellnessCompanion Watch App" \
             -destination "platform=watchOS Simulator,id=$SIM_UDID" \
             -derivedDataPath build \
-            -resultBundlePath TestResults.xcresult \
+            -resultBundlePath ci-output/TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Extract screenshots from test result bundle
         if: always()
         run: |
-          mkdir -p screenshots
-          if [ ! -d TestResults.xcresult ]; then
+          set -x
+          RESULT="ci-output/TestResults.xcresult"
+          mkdir -p ci-output/debug-json
+          if [ ! -d "$RESULT" ]; then
             echo "No TestResults.xcresult produced; skipping extraction."
             exit 0
           fi
-          xcrun xcresulttool get --format json --path TestResults.xcresult > result.json
 
-          jq -r '.. | objects | select(has("payloadRef") and has("name")) | "\(.name._value // "unnamed")\t\(.payloadRef.id._value)"' result.json \
-            | sort -u \
-            | while IFS=$'\t' read -r name id; do
-                safe_name=$(echo "$name" | tr -c 'A-Za-z0-9._-' '_')
-                echo "Exporting $name ($id)"
-                xcrun xcresulttool export --type file --path TestResults.xcresult --id "$id" --output-path "screenshots/${safe_name}.png" || true
-              done
+          # Step 1: root record -> id of the tests summary
+          xcrun xcresulttool get --format json --path "$RESULT" > ci-output/debug-json/root.json
+          TESTS_REF_ID=$(jq -r '.actions._values[0].actionResult.testsRef.id._value' ci-output/debug-json/root.json)
+          echo "testsRef id: $TESTS_REF_ID"
 
-          echo "Screenshots collected so far:"
-          ls -la screenshots
+          # Step 2: tests summary -> ids of each test method's detailed summary
+          xcrun xcresulttool get --format json --path "$RESULT" --id "$TESTS_REF_ID" > ci-output/debug-json/tests.json
+          SUMMARY_IDS=$(jq -r '.. | objects | select(has("summaryRef")) | .summaryRef.id._value' ci-output/debug-json/tests.json | sort -u)
+          echo "summary ids: $SUMMARY_IDS"
+
+          # Step 3: each test method summary -> attachment payloadRefs (possibly nested in subactivities)
+          : > ci-output/debug-json/all_summaries.jsonl
+          for sid in $SUMMARY_IDS; do
+            xcrun xcresulttool get --format json --path "$RESULT" --id "$sid" >> ci-output/debug-json/all_summaries.jsonl
+            echo >> ci-output/debug-json/all_summaries.jsonl
+          done
+
+          jq -s -r '.[] | .. | objects | select(has("payloadRef") and has("name")) | "\(.name._value // "unnamed")\t\(.payloadRef.id._value)"' \
+            ci-output/debug-json/all_summaries.jsonl | sort -u > ci-output/debug-json/attachments.tsv
+          echo "Found attachments:"
+          cat ci-output/debug-json/attachments.tsv
+
+          while IFS=$'\t' read -r name id; do
+            [ -z "$id" ] && continue
+            safe_name=$(echo "$name" | tr -c 'A-Za-z0-9._-' '_')
+            echo "Exporting $name ($id)"
+            xcrun xcresulttool export --type file --path "$RESULT" --id "$id" --output-path "ci-output/${safe_name}.png" || true
+          done < ci-output/debug-json/attachments.tsv
+
+          echo "ci-output contents:"
+          find ci-output -maxdepth 1 -type f
 
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: watchos-screenshots
-          path: screenshots/*
+          path: ci-output/*.png
           if-no-files-found: error
 
-      - name: Upload raw test result bundle
+      - name: Upload debug JSON (for troubleshooting extraction)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: xcresult-bundle
-          path: TestResults.xcresult
+          name: xcresult-debug-json
+          path: ci-output/debug-json
           if-no-files-found: ignore
